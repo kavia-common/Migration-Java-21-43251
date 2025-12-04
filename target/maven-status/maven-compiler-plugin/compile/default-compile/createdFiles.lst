@@ -9,12 +9,15 @@ com/coding/exercise/bankapp/MigrationBankAppApplication.class
 com/coding/exercise/bankapp/model/Address$AddressBuilder.class
 com/coding/exercise/bankapp/domain/CustomerDetails$CustomerDetailsBuilder.class
 com/coding/exercise/bankapp/domain/ContactDetails$ContactDetailsBuilder.class
+com/coding/exercise/bankapp/controller/CustomerController.class
+com/coding/exercise/bankapp/controller/AccountController.class
 com/coding/exercise/bankapp/model/Account.class
 com/coding/exercise/bankapp/model/CustomerAccountXRef.class
 com/coding/exercise/bankapp/domain/TransactionDetails.class
 com/coding/exercise/bankapp/domain/AccountInformation$AccountInformationBuilder.class
 com/coding/exercise/bankapp/repository/CustomerAccountXRefRepository.class
 com/coding/exercise/bankapp/service/helper/BankingServiceHelper.class
+com/coding/exercise/bankapp/controller/HomeController.class
 com/coding/exercise/bankapp/model/BankInfo.class
 com/coding/exercise/bankapp/model/CustomerAccountXRef$CustomerAccountXRefBuilder.class
 com/coding/exercise/bankapp/domain/TransferDetails$TransferDetailsBuilder.class
