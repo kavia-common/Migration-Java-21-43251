@@ -131,3 +131,30 @@
 2025-12-04 10:58:25,323 - Knowledge - INFO - ⚡ Total Redis path: 0.98s (vs ~300s from disk)
 2025-12-04 10:58:25,530 - Knowledge - INFO - Saving knowledge to Redis...
 2025-12-04 10:58:25,750 - Knowledge - INFO - Knowledge saved to Redis successfully
+2025-12-04 13:21:55,406 - Knowledge - INFO - Created shared MongoDB connection pool
+2025-12-04 13:21:55,718 - Knowledge - INFO - Starting Knowledge Graph processing with 20 threads
+2025-12-04 13:21:55,891 - Knowledge - INFO - Initial configuration: chunk_size=65536, max_cache_size=500
+2025-12-04 13:21:56,065 - Knowledge - INFO - Knowledge Graph concurrency configuration: workers=20, max_batch_size=25, max_concurrent_llm_calls=50
+2025-12-04 13:21:57,153 - Knowledge - INFO - 🔍 _load_persisted_knowledge called - checking for Redis optimization
+2025-12-04 13:21:57,363 - Knowledge - WARNING - ❌ load_from_redis method not found - Redis support not attached
+2025-12-04 13:21:57,515 - Knowledge - INFO - load persisted knowledge: begin
+2025-12-04 13:21:57,731 - Knowledge - INFO - Persisted knowledge files in /app/data/kaviademo4200/43251/b5708wv/Migration-Java-21-43251/.knowledge have been renamed to use .json
+2025-12-04 13:21:57,970 - Knowledge - INFO - Found code-base-name: https://github.com/kavia-common/Migration-Java-21-43251.git:kavia-main
+2025-12-04 13:21:58,141 - Knowledge - INFO - Found code_base: <app.utils.kg_build.knowledge.KnowledgeCodeBase object at 0x7f6172279bd0>
+2025-12-04 13:21:58,341 - Knowledge - INFO - process ingested knowledge for /app/data/kaviademo4200/43251/b5708wv/Migration-Java-21-43251/README.md
+2025-12-04 13:21:58,527 - Knowledge - INFO - Loaded 1 files from persisted knowledge
+2025-12-04 13:21:58,707 - Knowledge - INFO - load persisted knowledge: end
+2025-12-04 13:21:58,887 - Knowledge - INFO - Redis support added with prefix knowledge:b5708wv:
+2025-12-04 13:21:59,089 - Knowledge - INFO - Starting knowledge initialization for ID: ijKORm-b5708wv
+2025-12-04 13:21:59,245 - Knowledge - INFO - 🔍 Checking Redis for build_id: b5708wv
+2025-12-04 13:21:59,416 - Knowledge - INFO - 🔍 Full session ID: ijKORm-b5708wv
+2025-12-04 13:21:59,578 - Knowledge - INFO - 🔍 Redis prefix will be: knowledge:b5708wv:
+2025-12-04 13:21:59,770 - Knowledge - INFO - 🔍 Using attached load_from_redis() method
+2025-12-04 13:21:59,920 - Knowledge - INFO - 🔍 Attempting to load knowledge from Redis...
+2025-12-04 13:22:00,062 - Knowledge - INFO - 🔍 Using derived instance_id for Redis lookup: b5708wv
+2025-12-04 13:22:00,229 - Knowledge - INFO - ✅ Redis cache found! Loading knowledge...
+2025-12-04 13:22:00,435 - Knowledge - INFO - ✅ Successfully loaded from Redis: 1 files
+2025-12-04 13:22:00,599 - Knowledge - INFO - ✅ Redis load complete: 1 files in 0.83s
+2025-12-04 13:22:00,773 - Knowledge - INFO - ⚡ Total Redis path: 0.83s (vs ~300s from disk)
+2025-12-04 13:22:00,976 - Knowledge - INFO - Saving knowledge to Redis...
+2025-12-04 13:22:01,193 - Knowledge - INFO - Knowledge saved to Redis successfully
