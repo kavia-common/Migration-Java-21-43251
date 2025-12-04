@@ -18,19 +18,25 @@ import java.time.OffsetDateTime;
 import java.util.Optional;
 
 /**
- * DataInitializer seeds sample customers, accounts, and initial transactions on application startup.
+ * DataInitializer seeds sample customers, accounts, account-customer links (xrefs),
+ * and initial transactions on application startup.
  *
- * It runs only when the "initdata" or "dev" profile is active, to avoid seeding in production
- * or other environments unintentionally.
+ * Profile: runs only when the "seed" profile is active to avoid unintentional seeding.
  *
  * Idempotence:
- * - Uses unique business keys (like accountNumber and bankCode) to check for existence before creating records.
- * - Associates customers to accounts via xref if not already linked.
- * - Avoids duplicate transactions by simple presence checks (counts and/or descriptions) where possible.
+ * - Customers are located by (firstName, lastName, dob) and created if absent.
+ * - Accounts are located by unique accountNumber and created if absent.
+ * - XRefs are checked for existing link (customerId, accountId) before creating.
+ * - Transactions are seeded only when the target account has no existing transactions.
+ *
+ * Note on BankInfo:
+ * - To align with existing repositories and avoid relying on cascades that do not exist
+ *   on Account.bankInfo (ManyToOne without cascade), this seeder does not persist BankInfo.
+ *   Accounts are created with null BankInfo; other application flows may populate it.
  */
 // PUBLIC_INTERFACE
 @Component
-@Profile({"dev", "initdata"})
+@Profile({"seed"})
 public class DataInitializer implements CommandLineRunner {
 
     private static final Logger log = LoggerFactory.getLogger(DataInitializer.class);
@@ -53,15 +59,16 @@ public class DataInitializer implements CommandLineRunner {
     /**
      * PUBLIC_INTERFACE
      * Seeds initial data if not present:
-     * - Two customers (Alice and Bob) with address/contact
-     * - A bank info per account (embedded in Account.bankInfo)
-     * - Two accounts (one per customer) with initial balances
-     * - An initial transaction per account (Deposit)
+     * - Two customers (Alice Anderson and Bob Baker) with address/contact
+     * - Two accounts (one per customer) with initial balances (USD)
+     * - Links each customer to their account (PRIMARY role)
+     * - Creates an initial deposit transaction per account if none exist
      */
+    // PUBLIC_INTERFACE
     @Override
     @Transactional
     public void run(String... args) {
-        log.info("DataInitializer starting (profile=dev/initdata)");
+        log.info("DataInitializer starting (profile=seed)");
 
         // Seed customers
         Customer alice = ensureCustomer(
@@ -76,23 +83,12 @@ public class DataInitializer implements CommandLineRunner {
                 "555-333-4444", "bob@example.com"
         );
 
-        // Seed bank infos
-        BankInfo bankAlpha = BankInfo.builder()
-                .bankCode("ALPHA001")
-                .bankName("Alpha Bank")
-                .build();
-
-        BankInfo bankBeta = BankInfo.builder()
-                .bankCode("BETA002")
-                .bankName("Beta Bank")
-                .build();
-
-        // Seed accounts
+        // Seed accounts (no BankInfo to avoid unsaved transient entity issues)
         Account aliceAcct = ensureAccount(
-                "CHK-10001", "CHECKING", "USD", new BigDecimal("1500.00"), bankAlpha
+                "CHK-10001", "CHECKING", "USD", new BigDecimal("1500.00")
         );
         Account bobAcct = ensureAccount(
-                "SAV-20001", "SAVINGS", "USD", new BigDecimal("2500.00"), bankBeta
+                "SAV-20001", "SAVINGS", "USD", new BigDecimal("2500.00")
         );
 
         // Associate xrefs (PRIMARY role)
@@ -152,8 +148,7 @@ public class DataInitializer implements CommandLineRunner {
     private Account ensureAccount(String accountNumber,
                                   String type,
                                   String currency,
-                                  BigDecimal initialBalance,
-                                  BankInfo bankInfo) {
+                                  BigDecimal initialBalance) {
 
         // Check by unique account number
         Optional<Account> existing = accountRepository.findByAccountNumber(accountNumber);
@@ -161,22 +156,11 @@ public class DataInitializer implements CommandLineRunner {
             return existing.get();
         }
 
-        // Note: BankInfo is an entity; Account has a ManyToOne bankInfo.
-        // Since we don't have a BankInfoRepository in this scaffold, store it inline on persist via cascade or as new entity.
-        // Our Account entity has @ManyToOne but no cascade; we can attach bankInfo by persisting via a transient; JPA will persist it due to relationship if configured.
-        // To guarantee persistence, we can attach the BankInfo via account builder and rely on Hibernate to cascade persist the referenced entity when saving Account if configured.
-        // In our model, we did not specify cascade on bankInfo relation, so persist bankInfo via a transient merge-like trick:
-        // However, JPA without cascade will still persist the relation only if bankInfo is a managed entity. As a pragmatic approach here,
-        // we will allow Hibernate to save the related entity because GenerationType.IDENTITY will be used for both; if not, we would introduce a BankInfoRepository.
-        // To keep code minimal and working across providers, we inline the bank info and expect Hibernate to persist it due to relationship upon flush.
-        // If the environment doesn't persist BankInfo automatically, the account save may fail; but in practice with Hibernate and insert ordering this works.
-
         Account account = Account.builder()
                 .accountNumber(accountNumber)
                 .type(type)
                 .currency(currency)
                 .balance(initialBalance.setScale(2, java.math.RoundingMode.HALF_UP))
-                .bankInfo(bankInfo)
                 .createdAt(OffsetDateTime.now())
                 .build();
 
@@ -205,10 +189,9 @@ public class DataInitializer implements CommandLineRunner {
         boolean hasAnyTxn = !transactionRepository.findByAccount_Id(account.getId()).isEmpty();
         if (hasAnyTxn) return;
 
-        // Create a deposit transaction and adjust account balance if not already matching (precaution)
         BigDecimal scaledAmount = amount.setScale(2, java.math.RoundingMode.HALF_UP);
 
-        // If the current balance is not equal to the intended initial, adjust to match source expectations
+        // Ensure account balance reflects intended initial balance
         if (account.getBalance() == null || account.getBalance().compareTo(scaledAmount) != 0) {
             account.setBalance(scaledAmount);
             account.setUpdatedAt(OffsetDateTime.now());

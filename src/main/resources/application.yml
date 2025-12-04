@@ -50,11 +50,11 @@ spring:
       allow-credentials: true
       max-age: 3600
 
-# Enable the seeding initializer by running with one of these profiles:
-#   -Dspring.profiles.active=dev           (also activates initializer)
-#   -Dspring.profiles.active=initdata      (only initializer)
-# Example:
-# mvn -f Migration-Java-21-43251/pom.xml spring-boot:run -Dspring-boot.run.profiles=initdata
+# Enable data seeding by running with the 'seed' Spring profile:
+#   -Dspring.profiles.active=seed
+# Examples:
+#   mvn -f Migration-Java-21-43251/pom.xml spring-boot:run -Dspring-boot.run.profiles=seed
+#   java -jar target/bankapp-java21-0.0.1-SNAPSHOT.jar --spring.profiles.active=seed
 
 springdoc:
   api-docs:
