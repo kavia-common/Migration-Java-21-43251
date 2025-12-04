@@ -29,6 +29,7 @@ com/coding/exercise/bankapp/model/Transaction$TransactionBuilder.class
 com/coding/exercise/bankapp/domain/BankInformation$BankInformationBuilder.class
 com/coding/exercise/bankapp/service/BankingService.class
 com/coding/exercise/bankapp/controller/HealthController.class
+com/coding/exercise/bankapp/repository/BankInfoRepository.class
 com/coding/exercise/bankapp/domain/AddressDetails$AddressDetailsBuilder.class
 com/coding/exercise/bankapp/domain/TransferDetails.class
 com/coding/exercise/bankapp/model/BankInfo$BankInfoBuilder.class
