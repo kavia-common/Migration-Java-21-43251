@@ -6,6 +6,9 @@ server:
     context-path: /bank-api
 
 management:
+  # Expose basic actuator info and health; actuator is served under the same context-path
+  server:
+    base-path: /actuator
   endpoints:
     web:
       exposure:
@@ -22,6 +25,24 @@ management:
       show-details: "never"
 
 spring:
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        web-allow-others: true
+  datasource:
+    # In-memory H2 datasource with console access; DB kept alive for the JVM lifetime
+    url: jdbc:h2:mem:bankdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driverClassName: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
   web:
     cors:
       allowed-origins: ${ALLOWED_ORIGINS:https://vscode-internal-15158-beta.beta01.cloud.kavia.ai:3000,https://vscode-internal-15158-beta.beta01.cloud.kavia.ai:3002,http://localhost:3000,http://localhost:4000}
@@ -34,7 +55,9 @@ spring:
 springdoc:
   api-docs:
     path: /v3/api-docs
+    enabled: true
   swagger-ui:
     # Keep Swagger UI under the app context-path:
     # Resulting URL: /bank-api/swagger-ui (redirects to /bank-api/swagger-ui/index.html)
     path: /swagger-ui
+    enabled: true
