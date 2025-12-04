@@ -1,24 +1,33 @@
 # Migration-Java-21
 
-This workspace contains a Java 21 Spring Boot 3 scaffold for BankApp-Java21 using Maven Wrapper.
+This workspace contains a Java 21 Spring Boot 3 scaffold for BankApp-Java21 using system Maven (no wrapper assumptions).
 
-Build and version check:
-- Linux/macOS: `chmod +x mvnw && ./mvnw -q -e --version`
-- Windows: `mvnw.cmd -q -e --version`
+Prerequisites:
+- JDK 21 (Temurin recommended)
+- Maven 3.9.x
+
+Version check:
+- `java -version`
+- `mvn -version`
 
 Package (skipping tests for now):
-- Linux/macOS: `./mvnw -q -DskipTests package`
-- Windows: `mvnw.cmd -q -DskipTests package`
+- From this directory: `mvn -q -DskipTests clean package`
+- From repo root (using -f): `mvn -q -DskipTests -f Migration-Java-21-43251/pom.xml clean package`
 
 Run:
-- Linux/macOS: `./mvnw spring-boot:run`
-- Windows: `mvnw.cmd spring-boot:run`
+- From this directory:
+  `mvn spring-boot:run -Dspring-boot.run.arguments="--server.port=${PORT:-3002} --server.address=0.0.0.0 --server.servlet.context-path=/bank-api"`
+- From repo root (using -f):
+  `mvn -f Migration-Java-21-43251/pom.xml spring-boot:run -Dspring-boot.run.arguments="--server.port=${PORT:-3002} --server.address=0.0.0.0 --server.servlet.context-path=/bank-api"`
 
-After start, health and OpenAPI endpoints:
-- Actuator health: `GET http://localhost:3002/bank-api/actuator/health`
-- Simple REST health: `GET http://localhost:3002/bank-api/health` (returns `{"status":"UP"}`)
-- Swagger UI (springdoc): `GET http://localhost:3002/bank-api/swagger-ui` (redirects to `/bank-api/swagger-ui/index.html`)
-- OpenAPI JSON: `GET http://localhost:3002/bank-api/v3/api-docs`
+Jar execution (after packaging):
+- `java -jar target/bankapp-java21-0.0.1-SNAPSHOT.jar`
+
+After start, health and OpenAPI endpoints (context path is /bank-api):
+- Actuator health: GET http://localhost:3002/bank-api/actuator/health
+- Simple REST health: GET http://localhost:3002/bank-api/health (returns {"status":"UP"})
+- Swagger UI (springdoc): GET http://localhost:3002/bank-api/swagger-ui (redirects to /bank-api/swagger-ui/index.html)
+- OpenAPI JSON: GET http://localhost:3002/bank-api/v3/api-docs
 
 Preview/remote environment quick links:
 - Health: https://vscode-internal-15158-beta.beta01.cloud.kavia.ai:3002/bank-api/health
@@ -26,19 +35,24 @@ Preview/remote environment quick links:
 - Swagger UI: https://vscode-internal-15158-beta.beta01.cloud.kavia.ai:3002/bank-api/swagger-ui
 - OpenAPI JSON: https://vscode-internal-15158-beta.beta01.cloud.kavia.ai:3002/bank-api/v3/api-docs
 
-## CI Commands (Step 2.3)
+Notes:
+- Java 21 compilation is enforced via maven-compiler-plugin with <release>21</release>.
+- springdoc-openapi v2 starter is used with a relative OpenAPI server URL equal to the context path, ensuring HTTPS-friendly behavior behind proxies.
+- Global CORS is enabled for both MVC and Actuator; configure ALLOWED_ORIGINS env var if needed:
+  export ALLOWED_ORIGINS="https://your-preview-host:3000,http://localhost:3000"
+- Actuator health and Swagger UI are served under /bank-api.
 
-Use the following exact commands in CI:
+## CI Commands (system Maven; no wrapper)
 
-- Verify Java/Maven Wrapper:
-  - `chmod +x mvnw && ./mvnw -q -e --version`
+Use absolute or repo-relative -f to avoid working-directory issues:
 
-- Build (skip tests for faster CI in scaffold stage):
-  - `./mvnw -q -DskipTests package`
+- Build (skip tests):
+  mvn -q -DskipTests -f Migration-Java-21-43251/pom.xml clean package
 
-- Optional: Run (if needed in a preview job/stage):
-  - `./mvnw spring-boot:run`
+- Test:
+  mvn -q -f Migration-Java-21-43251/pom.xml test
 
-Note:
-- The application context path is `/bank-api`, so Actuator health is available at `/bank-api/actuator/health`.
-- Spring Boot Actuator dependency is present in `pom.xml`, and `application.yml` exposes `health` and `info` endpoints.
+- Optional: Run (in a preview job/stage):
+  mvn -f Migration-Java-21-43251/pom.xml spring-boot:run -Dspring-boot.run.arguments="--server.port=3002 --server.address=0.0.0.0 --server.servlet.context-path=/bank-api"
+
+Additional details and CI examples are available in kavia-docs/java21-migration-modernization-guide.md and kavia-docs/java21-ci-commands-and-setup.md.
