@@ -8,6 +8,7 @@ import com.coding.exercise.bankapp.repository.AccountRepository;
 import com.coding.exercise.bankapp.repository.CustomerAccountXRefRepository;
 import com.coding.exercise.bankapp.repository.CustomerRepository;
 import com.coding.exercise.bankapp.repository.TransactionRepository;
+import com.coding.exercise.bankapp.repository.BankInfoRepository;
 import com.coding.exercise.bankapp.service.helper.BankingServiceHelper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,7 @@ public class BankingServiceImpl implements BankingService {
     private final CustomerRepository customerRepository;
     private final CustomerAccountXRefRepository xRefRepository;
     private final TransactionRepository transactionRepository;
+    private final BankInfoRepository bankInfoRepository;
 
     // region Customers CRUD
 
@@ -81,13 +83,18 @@ public class BankingServiceImpl implements BankingService {
     @Override
     @Transactional
     public AccountInformation createAccount(Long customerId, AccountInformation accountInformation) {
-        // Map and persist BankInfo if provided via bankCode/bankName
+        // Resolve/persist BankInfo only if bankCode is present; avoid invalid save with null/blank bankCode.
         BankInfo bankInfo = null;
-        if (accountInformation != null && (accountInformation.getBankCode() != null || accountInformation.getBankName() != null)) {
-            bankInfo = BankInfo.builder()
-                    .bankCode(accountInformation.getBankCode())
-                    .bankName(accountInformation.getBankName())
-                    .build();
+        if (accountInformation != null) {
+            String bankCode = accountInformation.getBankCode();
+            String bankName = accountInformation.getBankName();
+            if (bankCode != null && !bankCode.isBlank()) {
+                bankInfo = bankInfoRepository.findByBankCode(bankCode)
+                        .orElseGet(() -> bankInfoRepository.save(BankInfo.builder()
+                                .bankCode(bankCode)
+                                .bankName(bankName)
+                                .build()));
+            }
         }
 
         Account account = toAccountEntity(accountInformation, bankInfo);
@@ -132,13 +139,21 @@ public class BankingServiceImpl implements BankingService {
     public AccountInformation updateAccount(Long accountId, AccountInformation accountInformation) {
         Account existing = accountRepository.findById(accountId)
                 .orElseThrow(() -> new IllegalArgumentException("Account not found: " + accountId));
+
+        // Resolve/persist BankInfo if bankCode provided; skip if only bankName present (can't persist without code).
         BankInfo bankInfo = null;
-        if (accountInformation != null && (accountInformation.getBankCode() != null || accountInformation.getBankName() != null)) {
-            bankInfo = BankInfo.builder()
-                    .bankCode(accountInformation.getBankCode())
-                    .bankName(accountInformation.getBankName())
-                    .build();
+        if (accountInformation != null) {
+            String bankCode = accountInformation.getBankCode();
+            String bankName = accountInformation.getBankName();
+            if (bankCode != null && !bankCode.isBlank()) {
+                bankInfo = bankInfoRepository.findByBankCode(bankCode)
+                        .orElseGet(() -> bankInfoRepository.save(BankInfo.builder()
+                                .bankCode(bankCode)
+                                .bankName(bankName)
+                                .build()));
+            }
         }
+
         applyNonNullAccountUpdates(existing, accountInformation, bankInfo);
         Account saved = accountRepository.save(existing);
         return toAccountInformation(saved);
