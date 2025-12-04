@@ -319,6 +319,32 @@ curl -s http://localhost:3002/bank-api/accounts/1/transactions | jq .
   - Actuator health checks
 - The original project was not modified. This Java 21 runtime lives separately at /home/kavia/workspace/code-generation/Migration-Java-21-43251.
 
+## Verification status (2025-12-04)
+
+Verified against the running preview on port 3002 (context-path /bank-api):
+
+- Endpoints
+  - GET /bank-api/healthz → 200
+  - GET /bank-api/actuator/health → 200
+  - GET /bank-api/v3/api-docs → 200
+  - GET /bank-api/swagger-ui → 200 (redirects to /bank-api/swagger-ui/index.html)
+  - GET /bank-api/h2-console → 302 redirect; GET /bank-api/h2-console/ → 200
+- Customers
+  - POST /bank-api/customers → 200; returns JSON with id (e.g., {"id": 6, ...})
+- Accounts
+  - POST /bank-api/accounts with bankCode/bankName on the current 3002 instance returned 500 (older build behavior).
+  - Workaround: create accounts without bankCode/bankName → 200; returns id.
+    - Example body: {"accountNumber":"CHK-<ts>-X","type":"CHECKING","currency":"USD"}
+- Monetary operations (POST methods):
+  - POST /bank-api/accounts/{id}/deposit?amount=12.00 → 200; body: 12.00
+  - POST /bank-api/accounts/transfer?fromAccountId={id1}&toAccountId={id2}&amount=5.00 → 200; body (source balance): 7.00
+  - POST /bank-api/accounts/{id}/withdraw?amount=5.25 also verified on another account (resulting balance 20.50)
+
+Notes:
+- Use POST for deposit, withdraw, and transfer.
+- H2 console returns 302 to /h2-console/; use the trailing slash or curl with -L to follow redirects.
+- The repository code includes a fix to persist/reuse BankInfo by bankCode before saving accounts. If the preview on 3002 shows 500 on POST /accounts with bankCode, redeploy the service with the current code or create accounts without bankCode/bankName as a temporary workaround.
+
 ## Troubleshooting
 
 - If Swagger UI does not load, ensure you are using the context-path (/bank-api) and the correct port (3002).
