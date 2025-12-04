@@ -9,9 +9,26 @@ management:
     web:
       exposure:
         include: health,info
+      cors:
+        allowed-origins: ${ALLOWED_ORIGINS:https://vscode-internal-15158-beta.beta01.cloud.kavia.ai:3000,https://vscode-internal-15158-beta.beta01.cloud.kavia.ai:3002,http://localhost:3000,http://localhost:4000}
+        allowed-methods: GET,POST,PUT,DELETE,PATCH,OPTIONS
+        allowed-headers: Content-Type,Authorization,X-Requested-With,Origin,Accept
+        exposed-headers: Location,Link
+        allow-credentials: true
+        max-age: 3600
   endpoint:
     health:
       show-details: "never"
+
+spring:
+  web:
+    cors:
+      allowed-origins: ${ALLOWED_ORIGINS:https://vscode-internal-15158-beta.beta01.cloud.kavia.ai:3000,https://vscode-internal-15158-beta.beta01.cloud.kavia.ai:3002,http://localhost:3000,http://localhost:4000}
+      allowed-methods: GET,POST,PUT,DELETE,PATCH,OPTIONS
+      allowed-headers: Content-Type,Authorization,X-Requested-With,Origin,Accept
+      exposed-headers: Location,Link
+      allow-credentials: true
+      max-age: 3600
 
 springdoc:
   swagger-ui:
