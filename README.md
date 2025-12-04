@@ -21,6 +21,8 @@ After start, health and OpenAPI endpoints:
 - OpenAPI JSON: `GET http://localhost:3002/bank-api/v3/api-docs`
 
 Preview/remote environment quick links:
+- Health: https://vscode-internal-15158-beta.beta01.cloud.kavia.ai:3002/bank-api/health
+- Actuator health: https://vscode-internal-15158-beta.beta01.cloud.kavia.ai:3002/bank-api/actuator/health
 - Swagger UI: https://vscode-internal-15158-beta.beta01.cloud.kavia.ai:3002/bank-api/swagger-ui
 - OpenAPI JSON: https://vscode-internal-15158-beta.beta01.cloud.kavia.ai:3002/bank-api/v3/api-docs
 
