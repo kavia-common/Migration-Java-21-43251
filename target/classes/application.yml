@@ -1,6 +1,7 @@
 server:
   port: ${PORT:3002}
   address: 0.0.0.0
+  forward-headers-strategy: framework
   servlet:
     context-path: /bank-api
 
@@ -31,6 +32,8 @@ spring:
       max-age: 3600
 
 springdoc:
+  api-docs:
+    path: /v3/api-docs
   swagger-ui:
     # Keep Swagger UI under the app context-path:
     # Resulting URL: /bank-api/swagger-ui (redirects to /bank-api/swagger-ui/index.html)
