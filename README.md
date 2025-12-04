@@ -15,4 +15,22 @@ Run:
 - Windows: `mvnw.cmd spring-boot:run`
 
 After start, health endpoint:
-- `GET http://localhost:3002/bank-api/actuator/health`
+- Actuator health: `GET http://localhost:3002/bank-api/actuator/health`
+- Simple REST health: `GET http://localhost:3002/bank-api/health` (returns `{"status":"UP"}`)
+
+## CI Commands (Step 2.3)
+
+Use the following exact commands in CI:
+
+- Verify Java/Maven Wrapper:
+  - `chmod +x mvnw && ./mvnw -q -e --version`
+
+- Build (skip tests for faster CI in scaffold stage):
+  - `./mvnw -q -DskipTests package`
+
+- Optional: Run (if needed in a preview job/stage):
+  - `./mvnw spring-boot:run`
+
+Note:
+- The application context path is `/bank-api`, so Actuator health is available at `/bank-api/actuator/health`.
+- Spring Boot Actuator dependency is present in `pom.xml`, and `application.yml` exposes `health` and `info` endpoints.
