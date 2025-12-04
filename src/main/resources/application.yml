@@ -7,8 +7,6 @@ server:
 
 management:
   # Expose basic actuator info and health; actuator is served under the same context-path
-  server:
-    base-path: /actuator
   endpoints:
     web:
       exposure:
