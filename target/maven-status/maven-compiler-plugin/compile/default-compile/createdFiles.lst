@@ -1,0 +1,4 @@
+com/coding/exercise/bankapp/config/OpenApiConfig.class
+com/coding/exercise/bankapp/config/WebCorsConfig.class
+com/coding/exercise/bankapp/controller/HealthController.class
+com/coding/exercise/bankapp/MigrationBankAppApplication.class
