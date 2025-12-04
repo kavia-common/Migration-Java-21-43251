@@ -12,9 +12,3 @@ management:
   endpoint:
     health:
       show-details: "never"
-
-springdoc:
-  swagger-ui:
-    # Keep Swagger UI under the app context-path:
-    # Resulting URL: /bank-api/swagger-ui (redirects to /bank-api/swagger-ui/index.html)
-    path: /swagger-ui

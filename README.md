@@ -14,9 +14,15 @@ Run:
 - Linux/macOS: `./mvnw spring-boot:run`
 - Windows: `mvnw.cmd spring-boot:run`
 
-After start, health endpoint:
+After start, health and OpenAPI endpoints:
 - Actuator health: `GET http://localhost:3002/bank-api/actuator/health`
 - Simple REST health: `GET http://localhost:3002/bank-api/health` (returns `{"status":"UP"}`)
+- Swagger UI (springdoc): `GET http://localhost:3002/bank-api/swagger-ui` (redirects to `/bank-api/swagger-ui/index.html`)
+- OpenAPI JSON: `GET http://localhost:3002/bank-api/v3/api-docs`
+
+Preview/remote environment quick links:
+- Swagger UI: https://vscode-internal-15158-beta.beta01.cloud.kavia.ai:3002/bank-api/swagger-ui
+- OpenAPI JSON: https://vscode-internal-15158-beta.beta01.cloud.kavia.ai:3002/bank-api/v3/api-docs
 
 ## CI Commands (Step 2.3)
 
