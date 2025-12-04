@@ -2,15 +2,18 @@
 
 This project is a Java 21 Spring Boot 3 migration container that mirrors the features and behavior of BankApp-179898 while keeping the original project untouched. It provides RESTful endpoints for customers, accounts, balances, deposits, withdrawals, transfers, transactions, and OpenAPI documentation, backed by an in-memory H2 database.
 
-Location and guarantees:
+## Project location and purpose
+
 - Project path: /home/kavia/workspace/code-generation/Migration-Java-21-43251
-- The original BankApp-179898 codebase remains untouched. This Java 21 project was created separately to achieve runtime and feature parity.
+- Container name: BankApp-Java21
+- Purpose: Provide a Java 21, Spring Boot 3 runtime that achieves endpoint and behavior parity with BankApp-179898, without modifying the original codebase.
+- Guarantee: The original BankApp-179898 codebase remains untouched. This Java 21 project was created separately to achieve runtime and feature parity.
 
 ## Prerequisites
 
 - Java 21 (Temurin recommended)
 - Maven 3.9.x or newer
-- Network access to bind to port 3002 (default) on 0.0.0.0
+- Ability to bind TCP port 3002 on 0.0.0.0
 
 Verify your environment:
 - java -version
@@ -32,10 +35,10 @@ Notes:
 - The project compiles with Java 21 (maven-compiler-plugin uses <release>21</release>).
 - Packaging produces a JAR at Migration-Java-21-43251/target/bankapp-java21-0.0.1-SNAPSHOT.jar.
 
-## Run
+## How to run (port 3002, context-path /bank-api)
 
-Default runtime configuration:
-- Port: 3002
+Default runtime configuration comes from application.yml:
+- Port: 3002 (configurable via PORT env var)
 - Address: 0.0.0.0
 - Context path: /bank-api
 
@@ -61,87 +64,39 @@ java -jar Migration-Java-21-43251/target/bankapp-java21-0.0.1-SNAPSHOT.jar
 # Overrides (optional):
 # java -jar Migration-Java-21-43251/target/bankapp-java21-0.0.1-SNAPSHOT.jar \
 #   --server.port=3002 --server.address=0.0.0.0 --server.servlet.context-path=/bank-api
+# Or using env:
+# PORT=3002 java -jar Migration-Java-21-43251/target/bankapp-java21-0.0.1-SNAPSHOT.jar
 ```
 
-Security note: For development and smoke testing, all endpoints are publicly accessible (CSRF disabled, frame options relaxed for H2 console).
+Security note: For development and smoke testing, endpoints are publicly accessible (CSRF disabled; frame options set to sameOrigin for H2 console) per SecurityConfig.
 
-## Quick smoke-check endpoints
+## Endpoints quick reference
 
-Once the app is running on port 3002 with context path /bank-api, these should all respond with HTTP 200 without authentication:
+All paths are relative to the context path /bank-api.
+
+- GET /healthz — Simple health check
+- GET /actuator/health — Spring Boot Actuator health
+- GET /v3/api-docs — OpenAPI document (JSON)
+- GET /swagger-ui — Swagger UI (redirects to /swagger-ui/index.html)
+- GET /h2-console — H2 console (302 to /h2-console/; use trailing slash)
+
+Quick curl checks:
 
 ```bash
-# Health
 curl -i http://localhost:3002/bank-api/healthz
-
-# Actuator health
 curl -i http://localhost:3002/bank-api/actuator/health
-
-# OpenAPI JSON
 curl -i http://localhost:3002/bank-api/v3/api-docs
-
-# Swagger UI (redirects to /bank-api/swagger-ui/index.html)
 curl -i http://localhost:3002/bank-api/swagger-ui
-
-# H2 Console (HTML)
-curl -i http://localhost:3002/bank-api/h2-console
+curl -iL http://localhost:3002/bank-api/h2-console
 ```
 
 Swagger UI in a browser:
 - http://localhost:3002/bank-api/swagger-ui
 - http://localhost:3002/bank-api/swagger-ui/index.html
 
-## API overview and parity
-
-This Java 21 service mirrors BankApp-179898 capabilities:
-- CRUD operations for customers and accounts.
-- Monetary operations: deposit, withdraw, transfer.
-- Balances and transaction history.
-- In-memory H2 database with web console enabled.
-- OpenAPI documentation via springdoc-openapi under /bank-api/swagger-ui.
-- Spring Boot Actuator health endpoint under /bank-api/actuator/health.
-
-Controllers and routes:
-- HealthController: GET /bank-api/health and /bank-api/healthz
-- CustomerController: /bank-api/customers
-- AccountController: /bank-api/accounts (incl. balance, deposit, withdraw, transfer, transactions)
-
-## H2 database console
-
-- Console: http://localhost:3002/bank-api/h2-console
-- Default JDBC URL: jdbc:h2:mem:bankdb
-- Username: sa
-- Password: (leave blank)
-
-The database is in-memory and persists only while the JVM is running. The configuration keeps the database alive for the application lifetime (DB_CLOSE_DELAY=-1).
-
-## Seed sample data (optional)
-
-A seeding profile is available to preload example customers and accounts. It runs only when the seed profile is active.
-
-Enable the seed profile:
-
-```bash
-# Maven run with seed profile (from repo root)
-mvn -f Migration-Java-21-43251/pom.xml spring-boot:run -Dspring-boot.run.profiles=seed
-
-# Running the JAR with seed profile
-java -jar Migration-Java-21-43251/target/bankapp-java21-0.0.1-SNAPSHOT.jar --spring.profiles.active=seed
-```
-
-The seed profile creates example customers (with address/contact), accounts with initial balances, links them, and records initial deposit transactions.
-
-## Example usage with curl
+## CRUD and money operations examples
 
 All examples assume the service is running at http://localhost:3002/bank-api and no authentication is required.
-
-### Health and docs
-
-```bash
-curl -s http://localhost:3002/bank-api/health    | jq .
-curl -s http://localhost:3002/bank-api/healthz   | jq .
-curl -s http://localhost:3002/bank-api/actuator/health | jq .
-curl -s http://localhost:3002/bank-api/v3/api-docs     | jq . | head
-```
 
 ### Customers
 
@@ -300,59 +255,71 @@ Get transaction history:
 curl -s http://localhost:3002/bank-api/accounts/1/transactions | jq .
 ```
 
-## Configuration highlights
+## H2 console notes (frame options, path, trailing slash)
 
-- server.port: 3002
-- server.servlet.context-path: /bank-api
-- spring.h2.console.enabled: true (path: /h2-console under the app context)
-- springdoc-openapi: Swagger UI at /bank-api/swagger-ui; OpenAPI JSON at /bank-api/v3/api-docs
-- Actuator: /bank-api/actuator/health exposed (no auth)
-- Global CORS: Allowed origins can be configured with ALLOWED_ORIGINS (WebCorsConfig).
+- Console URL: http://localhost:3002/bank-api/h2-console/ (note the trailing slash; /h2-console redirects with 302)
+- Frame options are set to sameOrigin in SecurityConfig to allow the H2 console UI to render.
+- JDBC URL: jdbc:h2:mem:bankdb
+- Username: sa
+- Password: (leave blank)
+- The H2 database is in-memory and lives for the JVM lifetime (DB_CLOSE_DELAY=-1).
 
-## Parity statement
+Tip: With curl, use -L to follow the 302 redirect:
+```bash
+curl -iL http://localhost:3002/bank-api/h2-console
+```
 
-- This Java 21 project mirrors the REST endpoints, behaviors, and developer experience of BankApp-179898:
-  - CRUD for customers and accounts
-  - Deposits, withdrawals, transfers, balances, and transaction history
-  - H2 in-memory persistence with console access
-  - OpenAPI documentation and Swagger UI
-  - Actuator health checks
-- The original project was not modified. This Java 21 runtime lives separately at /home/kavia/workspace/code-generation/Migration-Java-21-43251.
+## Seed profile (optional) and idempotence
 
-## Verification status (2025-12-04)
+A seeding profile is available to preload example customers and accounts. It runs only when the seed profile is active and is idempotent:
+- Customers are located by name/date-of-birth before insert.
+- Accounts are located by unique accountNumber before insert.
+- XRefs are only created if the link does not exist.
+- Initial deposit transactions are created only when the account has no transactions.
 
-Verified against the running preview on port 3002 (context-path /bank-api):
+Enable the seed profile:
 
-- Endpoints
-  - GET /bank-api/healthz → 200
-  - GET /bank-api/actuator/health → 200
-  - GET /bank-api/v3/api-docs → 200
-  - GET /bank-api/swagger-ui → 200 (redirects to /bank-api/swagger-ui/index.html)
-  - GET /bank-api/h2-console → 302 redirect; GET /bank-api/h2-console/ → 200
-- Customers
-  - POST /bank-api/customers → 200; returns JSON with id (e.g., {"id": 6, ...})
-- Accounts
-  - POST /bank-api/accounts with bankCode/bankName on the current 3002 instance returned 500 (older build behavior).
-  - Workaround: create accounts without bankCode/bankName → 200; returns id.
-    - Example body: {"accountNumber":"CHK-<ts>-X","type":"CHECKING","currency":"USD"}
-- Monetary operations (POST methods):
-  - POST /bank-api/accounts/{id}/deposit?amount=12.00 → 200; body: 12.00
-  - POST /bank-api/accounts/transfer?fromAccountId={id1}&toAccountId={id2}&amount=5.00 → 200; body (source balance): 7.00
-  - POST /bank-api/accounts/{id}/withdraw?amount=5.25 also verified on another account (resulting balance 20.50)
+```bash
+# Maven run with seed profile (from repo root)
+mvn -f Migration-Java-21-43251/pom.xml spring-boot:run -Dspring-boot.run.profiles=seed
 
-Notes:
-- Use POST for deposit, withdraw, and transfer.
-- H2 console returns 302 to /h2-console/; use the trailing slash or curl with -L to follow redirects.
-- The repository code includes a fix to persist/reuse BankInfo by bankCode before saving accounts. If the preview on 3002 shows 500 on POST /accounts with bankCode, redeploy the service with the current code or create accounts without bankCode/bankName as a temporary workaround.
+# Running the JAR with seed profile
+java -jar Migration-Java-21-43251/target/bankapp-java21-0.0.1-SNAPSHOT.jar --spring.profiles.active=seed
+```
+
+## Parity confirmation with BankApp-179898
+
+This Java 21 service provides endpoint and behavior parity with BankApp-179898. The following capabilities are confirmed:
+- CRUD operations for customers and accounts
+- Monetary operations: deposit, withdraw, transfer, and transaction history
+- Balance retrieval and customer-linked balances
+- In-memory H2 database with web console enabled
+- OpenAPI documentation via springdoc-openapi under /bank-api/swagger-ui
+- Spring Boot Actuator health endpoint under /bank-api/actuator/health
+
+Original code remains untouched: BankApp-179898 was not modified. This Java 21 runtime lives separately at /home/kavia/workspace/code-generation/Migration-Java-21-43251.
+
+## Verification logs (2025-12-04)
+
+Verification artifacts demonstrating parity and smoke checks:
+- kavia-docs/smoke-check-2025-12-04.md
+- kavia-docs/endpoint-verification-logs-2025-12-04.md
+- kavia-docs/final-verification-2025-12-04.md
+- kavia-docs/final-verification-sweep-2025-12-04-3002.md
+- kavia-docs/java21-ci-commands-and-setup.md
+- kavia-docs/java21-migration-modernization-guide.md
+
+Open directly from the repository for details on the executed checks.
 
 ## Troubleshooting
 
-- If Swagger UI does not load, ensure you are using the context-path (/bank-api) and the correct port (3002).
+- If Swagger UI does not load, ensure you are using the context path (/bank-api) and the correct port (3002).
 - If H2 console prompts for connection:
   - JDBC URL: jdbc:h2:mem:bankdb
   - User: sa
   - Password: (leave blank)
 - If curl shows connection errors, verify the service is running and bound to 0.0.0.0:3002, and no firewall rules block localhost access.
+- For browser-origin calls (e.g., web UIs), CORS is enabled with allowed origins configurable via the ALLOWED_ORIGINS property.
 
 ## License
 
