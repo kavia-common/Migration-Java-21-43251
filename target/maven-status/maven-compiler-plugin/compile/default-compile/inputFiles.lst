@@ -16,3 +16,7 @@
 /home/kavia/workspace/code-generation/Migration-Java-21-43251/src/main/java/com/coding/exercise/bankapp/model/Customer.java
 /home/kavia/workspace/code-generation/Migration-Java-21-43251/src/main/java/com/coding/exercise/bankapp/model/CustomerAccountXRef.java
 /home/kavia/workspace/code-generation/Migration-Java-21-43251/src/main/java/com/coding/exercise/bankapp/model/Transaction.java
+/home/kavia/workspace/code-generation/Migration-Java-21-43251/src/main/java/com/coding/exercise/bankapp/repository/AccountRepository.java
+/home/kavia/workspace/code-generation/Migration-Java-21-43251/src/main/java/com/coding/exercise/bankapp/repository/CustomerAccountXRefRepository.java
+/home/kavia/workspace/code-generation/Migration-Java-21-43251/src/main/java/com/coding/exercise/bankapp/repository/CustomerRepository.java
+/home/kavia/workspace/code-generation/Migration-Java-21-43251/src/main/java/com/coding/exercise/bankapp/repository/TransactionRepository.java

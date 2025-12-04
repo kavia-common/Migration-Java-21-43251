@@ -3,6 +3,7 @@ com/coding/exercise/bankapp/domain/AddressDetails.class
 com/coding/exercise/bankapp/model/Customer$CustomerBuilder.class
 com/coding/exercise/bankapp/model/Address.class
 com/coding/exercise/bankapp/domain/CustomerDetails.class
+com/coding/exercise/bankapp/repository/TransactionRepository.class
 com/coding/exercise/bankapp/model/Contact.class
 com/coding/exercise/bankapp/MigrationBankAppApplication.class
 com/coding/exercise/bankapp/model/Address$AddressBuilder.class
@@ -12,6 +13,7 @@ com/coding/exercise/bankapp/model/Account.class
 com/coding/exercise/bankapp/model/CustomerAccountXRef.class
 com/coding/exercise/bankapp/domain/TransactionDetails.class
 com/coding/exercise/bankapp/domain/AccountInformation$AccountInformationBuilder.class
+com/coding/exercise/bankapp/repository/CustomerAccountXRefRepository.class
 com/coding/exercise/bankapp/model/BankInfo.class
 com/coding/exercise/bankapp/model/CustomerAccountXRef$CustomerAccountXRefBuilder.class
 com/coding/exercise/bankapp/domain/TransferDetails$TransferDetailsBuilder.class
@@ -25,6 +27,8 @@ com/coding/exercise/bankapp/model/BankInfo$BankInfoBuilder.class
 com/coding/exercise/bankapp/domain/BankInformation.class
 com/coding/exercise/bankapp/domain/TransactionDetails$TransactionDetailsBuilder.class
 com/coding/exercise/bankapp/model/Customer.class
+com/coding/exercise/bankapp/repository/AccountRepository.class
+com/coding/exercise/bankapp/repository/CustomerRepository.class
 com/coding/exercise/bankapp/domain/AccountInformation.class
 com/coding/exercise/bankapp/model/Account$AccountBuilder.class
 com/coding/exercise/bankapp/config/WebCorsConfig.class
