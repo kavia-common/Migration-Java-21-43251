@@ -52,6 +52,12 @@ spring:
       allow-credentials: true
       max-age: 3600
 
+# Enable the seeding initializer by running with one of these profiles:
+#   -Dspring.profiles.active=dev           (also activates initializer)
+#   -Dspring.profiles.active=initdata      (only initializer)
+# Example:
+# mvn -f Migration-Java-21-43251/pom.xml spring-boot:run -Dspring-boot.run.profiles=initdata
+
 springdoc:
   api-docs:
     path: /v3/api-docs
