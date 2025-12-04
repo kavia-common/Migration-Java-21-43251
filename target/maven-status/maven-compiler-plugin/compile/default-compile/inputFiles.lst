@@ -2,3 +2,17 @@
 /home/kavia/workspace/code-generation/Migration-Java-21-43251/src/main/java/com/coding/exercise/bankapp/config/OpenApiConfig.java
 /home/kavia/workspace/code-generation/Migration-Java-21-43251/src/main/java/com/coding/exercise/bankapp/config/WebCorsConfig.java
 /home/kavia/workspace/code-generation/Migration-Java-21-43251/src/main/java/com/coding/exercise/bankapp/controller/HealthController.java
+/home/kavia/workspace/code-generation/Migration-Java-21-43251/src/main/java/com/coding/exercise/bankapp/domain/AccountInformation.java
+/home/kavia/workspace/code-generation/Migration-Java-21-43251/src/main/java/com/coding/exercise/bankapp/domain/AddressDetails.java
+/home/kavia/workspace/code-generation/Migration-Java-21-43251/src/main/java/com/coding/exercise/bankapp/domain/BankInformation.java
+/home/kavia/workspace/code-generation/Migration-Java-21-43251/src/main/java/com/coding/exercise/bankapp/domain/ContactDetails.java
+/home/kavia/workspace/code-generation/Migration-Java-21-43251/src/main/java/com/coding/exercise/bankapp/domain/CustomerDetails.java
+/home/kavia/workspace/code-generation/Migration-Java-21-43251/src/main/java/com/coding/exercise/bankapp/domain/TransactionDetails.java
+/home/kavia/workspace/code-generation/Migration-Java-21-43251/src/main/java/com/coding/exercise/bankapp/domain/TransferDetails.java
+/home/kavia/workspace/code-generation/Migration-Java-21-43251/src/main/java/com/coding/exercise/bankapp/model/Account.java
+/home/kavia/workspace/code-generation/Migration-Java-21-43251/src/main/java/com/coding/exercise/bankapp/model/Address.java
+/home/kavia/workspace/code-generation/Migration-Java-21-43251/src/main/java/com/coding/exercise/bankapp/model/BankInfo.java
+/home/kavia/workspace/code-generation/Migration-Java-21-43251/src/main/java/com/coding/exercise/bankapp/model/Contact.java
+/home/kavia/workspace/code-generation/Migration-Java-21-43251/src/main/java/com/coding/exercise/bankapp/model/Customer.java
+/home/kavia/workspace/code-generation/Migration-Java-21-43251/src/main/java/com/coding/exercise/bankapp/model/CustomerAccountXRef.java
+/home/kavia/workspace/code-generation/Migration-Java-21-43251/src/main/java/com/coding/exercise/bankapp/model/Transaction.java
